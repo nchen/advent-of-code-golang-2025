@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -79,8 +80,37 @@ func part_1(lines []string) {
 	ids := scanIDs(lines)
 
 	fmt.Println("Number of ranges: ", len(ranges))
-	fmt.Println(ranges[2].start, ranges[2].end)
+	// fmt.Println(ranges[2].start, ranges[2].end)
 
 	fmt.Println("Number of IDs: ", len(ids))
-	fmt.Println(ids[5])
+	// fmt.Println(ids[5])
+
+	sort.Slice(ranges, func(i, j int) bool {
+		if ranges[i].start < ranges[j].start {
+			return true
+		} else if ranges[i].start > ranges[j].start {
+			return false
+		} else {
+			return ranges[i].end < ranges[j].end
+		}
+	})
+
+	for _, r := range ranges {
+		fmt.Println(r.start, "-", r.end)
+	}
+
+	var freshIDs []int
+	for _, id := range ids {
+		for _, r := range ranges {
+			if id < r.start {
+				break
+			}
+			if id <= r.end {
+				freshIDs = append(freshIDs, id)
+				break
+			}
+		}
+	}
+
+	fmt.Println("Length of fresh IDs: ", len(freshIDs))
 }
