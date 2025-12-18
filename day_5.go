@@ -70,6 +70,7 @@ func main() {
 	lines := strings.Split(string(input), "\n")
 
 	part_1(lines)
+	part_2(lines)
 }
 
 func part_1(lines []string) {
@@ -95,9 +96,9 @@ func part_1(lines []string) {
 		}
 	})
 
-	for _, r := range ranges {
-		fmt.Println(r.start, "-", r.end)
-	}
+	// for _, r := range ranges {
+	// 	fmt.Println(r.start, "-", r.end)
+	// }
 
 	var freshIDs []int
 	for _, id := range ids {
@@ -113,4 +114,40 @@ func part_1(lines []string) {
 	}
 
 	fmt.Println("Length of fresh IDs: ", len(freshIDs))
+}
+
+func part_2(lines []string) {
+	fmt.Println("Part 2")
+	ranges := scanRanges(lines)
+	fmt.Println("Number of ranges: ", len(ranges))
+
+	sort.Slice(ranges, func(i, j int) bool {
+		if ranges[i].start < ranges[j].start {
+			return true
+		} else if ranges[i].start > ranges[j].start {
+			return false
+		} else {
+			return ranges[i].end < ranges[j].end
+		}
+	})
+
+	numIDs := 0
+	lastStart := 0
+	lastEnd := 0
+
+	for _, r := range ranges {
+		if r.start > lastEnd {
+			numIDs += r.end - r.start + 1
+		} else if r.start == lastEnd {
+			numIDs += r.end - r.start
+		} else if r.end <= lastEnd {
+			// do nothing
+		} else {
+			numIDs += r.end - lastEnd
+		}
+		lastStart = max(lastStart, r.start)
+		lastEnd = max(lastEnd, r.end)
+	}
+
+	fmt.Println("Number of IDs: ", numIDs)
 }
